@@ -4,4 +4,112 @@ RSpec.describe ActiveRecordExplainInEnglish do
   it "adds explain_in_english to ActiveRecord::Relation" do
     expect(User.all).to respond_to(:explain_in_english)
   end
+
+  describe "#explain_in_english" do
+    it "describes a bare relation" do
+      expect(User.all.explain_in_english).to eq("Find users")
+    end
+
+    it "describes a simple equality" do
+      expect(User.where(active: true).explain_in_english)
+        .to eq("Find users, where active is true")
+    end
+
+    it "describes inequality" do
+      expect(User.where.not(active: true).explain_in_english)
+        .to eq("Find users, where active is not true")
+    end
+
+    it "describes a nil match as 'nothing'" do
+      expect(User.where(name: nil).explain_in_english)
+        .to eq("Find users, where name is nothing")
+    end
+
+    it "describes a range as a between" do
+      expect(User.where(age: 18..65).explain_in_english)
+        .to eq("Find users, where age is between 18 and 65")
+    end
+
+    it "describes an array match as 'one of'" do
+      expect(User.where(role: %w[admin user]).explain_in_english)
+        .to eq("Find users, where role is one of admin, user")
+    end
+
+    it "describes string values" do
+      expect(User.where(name: "Jonny").explain_in_english)
+        .to eq("Find users, where name is Jonny")
+    end
+
+    it "describes ascending order" do
+      expect(User.order(:created_at).explain_in_english)
+        .to eq("Find users, ordered by created at ascending")
+    end
+
+    it "describes descending order" do
+      expect(User.order(created_at: :desc).explain_in_english)
+        .to eq("Find users, ordered by created at descending")
+    end
+
+    it "describes limit and offset" do
+      expect(User.offset(20).limit(10).explain_in_english)
+        .to eq("Find users, limited to 10, offset by 20")
+    end
+
+    it "humanizes underscored column names" do
+      expect(User.order(updated_at: :asc).explain_in_english)
+        .to eq("Find users, ordered by updated at ascending")
+    end
+
+    it "joins multiple wheres with commas" do
+      expect(User.where(active: true, role: "admin").explain_in_english)
+        .to eq("Find users, where active is true, role is admin")
+    end
+
+    it "combines where, order, limit, and offset" do
+      expect(
+        User.where(active: true)
+            .order(created_at: :desc)
+            .limit(10)
+            .offset(5)
+            .explain_in_english
+      ).to eq("Find users, where active is true, ordered by created at descending, limited to 10, offset by 5")
+    end
+
+    it "Can handle complex queries" do
+      expect(
+        User.where(active: true, age: 18..65, name: "John")
+            .order(created_at: :desc)
+            .limit(10)
+            .offset(5)
+            .explain_in_english
+      ).to eq("Find users, where active is true, age is between 18 and 65, name is John, ordered by created at descending, limited to 10, offset by 5")
+    end
+
+    it "describes multiple ordering columns" do
+      expect(User.order(active: :desc, created_at: :asc).explain_in_english)
+        .to eq("Find users, ordered by active descending, created at ascending")
+    end
+
+    it "describes chained where calls as separate conditions" do
+      expect(User.where(active: true).where(role: "admin").explain_in_english)
+        .to eq("Find users, where active is true, role is admin")
+    end
+
+    it "describes an OR between two conditions" do
+      relation = User.where(role: "admin").or(User.where(role: "user"))
+      expect(relation.explain_in_english)
+        .to eq("Find users, where role is admin or role is user")
+    end
+
+    it "describes a not-in array match" do
+      expect(User.where.not(role: %w[admin user]).explain_in_english)
+        .to eq("Find users, where role is none of admin, user")
+    end
+
+    it "raises NotImplementedError for unsupported nodes" do
+      relation = User.where("age > ?", 18)
+      expect { relation.explain_in_english }
+        .to raise_error(NotImplementedError, /cannot translate/)
+    end
+  end
 end

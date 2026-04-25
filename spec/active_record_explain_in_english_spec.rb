@@ -106,10 +106,71 @@ RSpec.describe ActiveRecordExplainInEnglish do
         .to eq("Find users, where role is none of admin, user")
     end
 
-    it "raises NotImplementedError for unsupported nodes" do
-      relation = User.where("age > ?", 18)
-      expect { relation.explain_in_english }
-        .to raise_error(NotImplementedError, /cannot translate/)
+    it "describes selected columns" do
+      expect(User.select(:name, :role).explain_in_english)
+        .to eq("Find name, role from users")
+    end
+
+    it "describes distinct relations" do
+      expect(User.distinct.explain_in_english)
+        .to eq("Find distinct users")
+    end
+
+    it "describes distinct selected columns" do
+      expect(User.select(:role).distinct.explain_in_english)
+        .to eq("Find distinct role from users")
+    end
+
+    it "describes inner joins" do
+      expect(User.joins(:posts).explain_in_english)
+        .to eq("Find users, joined to posts")
+    end
+
+    it "describes left outer joins" do
+      expect(User.left_joins(:posts).explain_in_english)
+        .to eq("Find users, left joined to posts")
+    end
+
+    it "describes grouped relations" do
+      expect(User.group(:role).explain_in_english)
+        .to eq("Find users, grouped by role")
+    end
+
+    it "describes having clauses" do
+      expect(User.group(:role).having("COUNT(*) > ?", 1).explain_in_english)
+        .to eq("Find users, grouped by role, having COUNT(*) > 1")
+    end
+
+    it "describes raw SQL where clauses" do
+      expect(User.where("age > ?", 18).explain_in_english)
+        .to eq("Find users, where age > 18")
+    end
+
+    it "describes raw SQL order clauses" do
+      expect(User.order("created_at DESC").explain_in_english)
+        .to eq("Find users, ordered by created_at DESC")
+    end
+
+    it "describes raw SQL projections" do
+      expect(User.select("COUNT(*) AS total").explain_in_english)
+        .to eq("Find COUNT(*) AS total from users")
+    end
+
+    it "describes aggregate projections" do
+      expect(User.select(User.arel_table[:id].count).explain_in_english)
+        .to eq("Find count of id from users")
+    end
+
+    it "describes named function projections" do
+      function = Arel::Nodes::NamedFunction.new("LOWER", [User.arel_table[:name]])
+
+      expect(User.select(function).explain_in_english)
+        .to eq("Find lower of name from users")
+    end
+
+    it "describes aliased projections" do
+      expect(User.select(User.arel_table[:age].average.as("average_age")).explain_in_english)
+        .to eq("Find average of age as average_age from users")
     end
   end
 end

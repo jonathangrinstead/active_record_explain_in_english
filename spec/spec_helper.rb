@@ -2,6 +2,9 @@ require "active_record"
 require "database_cleaner/active_record"
 require "active_record_explain_in_english"
 require "support/user"
+require "support/post"
+require "support/category"
+require "support/comment"
 
 ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
 
@@ -13,6 +16,26 @@ ActiveRecord::Schema.define do
     t.integer  :age
     t.datetime :created_at
     t.datetime :updated_at
+  end
+
+  create_table :posts, force: true do |t|
+    t.integer :user_id
+    t.integer :category_id
+    t.string  :title
+    t.boolean :published
+  end
+
+  create_table :categories, force: true do |t|
+    t.string :name
+    t.boolean :archived
+  end
+
+  create_table :comments, force: true do |t|
+    t.integer :user_id
+    t.integer :post_id
+    t.string  :body
+    t.boolean :approved
+    t.datetime :created_at
   end
 end
 

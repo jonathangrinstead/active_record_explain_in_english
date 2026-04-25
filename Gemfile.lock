@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     active_record_explain_in_english (0.1.0)
-      activerecord
+      activerecord (>= 7.1, < 8.2)
 
 GEM
   remote: https://rubygems.org/
@@ -88,11 +88,11 @@ PLATFORMS
 
 DEPENDENCIES
   active_record_explain_in_english!
-  bundler (>= 1.17)
-  database_cleaner-active_record
-  rake (>= 10.0)
-  rspec
-  sqlite3
+  bundler (>= 1.17, < 5)
+  database_cleaner-active_record (~> 2.2)
+  rake (>= 10.0, < 14)
+  rspec (~> 3.13)
+  sqlite3 (~> 2.9)
 
 CHECKSUMS
   active_record_explain_in_english (0.1.0)

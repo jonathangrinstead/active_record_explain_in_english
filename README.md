@@ -46,17 +46,8 @@ User.where(age: 18..65)
 It also handles common relation clauses:
 
 ```ruby
-User.select(:name, :role).explain_in_english
-# => "Find name, role from users"
-
-User.select(:role).distinct.explain_in_english
-# => "Find distinct role from users"
-
 User.joins(:posts).where(posts: { published: true }).explain_in_english
 # => "Find users, joined to posts, where published is true"
-
-User.group(:role).having("COUNT(*) > ?", 1).explain_in_english
-# => "Find users, grouped by role, having COUNT(*) > 1"
 ```
 
 ## Supported Query Shapes
@@ -70,8 +61,6 @@ The first release supports:
 - `select`, `distinct`, aliases, aggregate functions, and named functions
 - `joins` and `left_joins`
 - `group` and `having`
-
-Unsupported Arel nodes raise `NotImplementedError` so missing coverage is visible.
 
 ## Development
 

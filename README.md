@@ -1,5 +1,7 @@
 # ActiveRecordExplainInEnglish
 
+[![Gem Version](https://badge.fury.io/rb/active_record_explain_in_english.svg)](https://rubygems.org/gems/active_record_explain_in_english)
+
 ActiveRecordExplainInEnglish adds `explain_in_english` to `ActiveRecord::Relation`.
 
 It describes the shape of an ActiveRecord query in plain English by walking the Arel nodes behind the relation. This is useful when you want to show, log, or teach what a query is asking for without showing raw SQL.
@@ -9,7 +11,7 @@ It describes the shape of an ActiveRecord query in plain English by walking the 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem "active_record_explain_in_english"
+gem "active_record_explain_in_english", "~> 0.1.0"
 ```
 
 And then execute:

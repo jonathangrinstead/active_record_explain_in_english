@@ -52,8 +52,6 @@ User.joins(:posts).where(posts: { published: true }).explain_in_english
 # => "Find users with published posts. A user appears once for each matching post."
 ```
 
-## Conversational explanations
-
 Conversational wording is the default; call `explain_in_english` without any options.
 
 ```ruby

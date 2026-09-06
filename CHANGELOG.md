@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- Made conversational sentences the default output of `explain_in_english`, with no style option.
+- Added contextual wording for familiar booleans, names, ages, dates, ordering and pagination.
+- Preserved logical grouping, missing-value distinctions, table ownership and join multiplicity in explanations.
+- Added association-aware wording for simple joins and clearer aggregate, alias and distinct-result descriptions.
+- Labelled raw SQL explicitly and delegated bind quoting to Active Record.
+- Updated examples and regression specs for the new returned strings and punctuation.
+
+### Fixed
+
+- Excluded built `.gem` archives from the package file list so Bundler can load the gemspec.
+
 ## 0.1.0 - 2026-04-25
 
 ### Added
